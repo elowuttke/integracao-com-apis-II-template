@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ButtonNome, DeleteButton, ButtonContainer, MainContainer, InputContainer, SaveButton, CloseButton } from './style'
-import {AiOutlineDelete} from 'react-icons/ai'
+import {
+  ButtonNome,
+  DeleteButton,
+  ButtonContainer,
+  MainContainer,
+  InputContainer,
+  SaveButton,
+  CloseButton,
+} from "./style";
+import { AiOutlineDelete } from "react-icons/ai";
 import { Input } from "../../Appstyle";
 
 export const EditarUsuario = (props) => {
   const [usuario, setUsuario] = useState({});
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [editar, setEditar] = useState(false)
-
+  const [editar, setEditar] = useState(false);
 
   const getDadosUsuario = () => {
     axios
@@ -17,7 +24,7 @@ export const EditarUsuario = (props) => {
         `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/${props.id}`,
         {
           headers: {
-            Authorization: "ana-sammi-barbosa",
+            Authorization: "eloisa-wuttke-conway",
           },
         }
       )
@@ -35,62 +42,83 @@ export const EditarUsuario = (props) => {
     getDadosUsuario();
   }, []);
 
-  const editaUsuario = () => {
+  const editaUsuario = async () => {
     const body = {
-        name,
-        email
-      };
-      axios
-        .put(
-          `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/${usuario.id}`,
-          body,
-          {
-            headers: {
-              Authorization: "ana-sammi-barbosa"
-            }
-          }
-        )
-        .then(() => {
-          getDadosUsuario();
-          setEditar(!editar)
-        });
-  }
+      name,
+      email,
+    };
 
-  const deletarUsuario = () => {
-    axios
-      .delete(
+    try {
+      await axios.put(
+        `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/${usuario.id}`,
+        body,
+        {
+          headers: {
+            Authorization: "eloisa-wuttke-conway",
+          },
+        }
+      );
+      getDadosUsuario();
+      setEditar(!editar);
+    } catch (error) {
+      console.log(error.response);
+    }
+
+    // .then(() => {
+    //   getDadosUsuario();
+    //   setEditar(!editar)
+    // });
+  };
+
+  const deletarUsuario = async () => {
+    try {
+      axios.delete(
         `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/${usuario.id}`,
         {
           headers: {
-            Authorization: "ana-sammi-barbosa"
-          }
+            Authorization: "eloisa-wuttke-conway",
+          },
         }
-      )
-      .then(() => {
-        alert("usuario removido");
-        // chama de novo o get usuarios pra atualizar a lista
-        props.getUsuarios();
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-  };
+      );
+      alert("usuario removido");
+      // chama de novo o get usuarios pra atualizar a lista
+      props.getUsuarios();
+    } catch (error) {
+      console.log(error.response);
+    }
 
+    // .then(() => {
+    //   alert("usuario removido");
+    //   // chama de novo o get usuarios pra atualizar a lista
+    //   props.getUsuarios();
+    // })
+  };
 
   return (
     <MainContainer>
-
       {editar ? (
         <InputContainer>
-        <Input placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <SaveButton onClick={editaUsuario}>Salvar</SaveButton>
-        <CloseButton onClick={() => setEditar(!editar)}>Fechar</CloseButton>
+          <Input
+            placeholder="Nome"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <SaveButton onClick={editaUsuario}>Salvar</SaveButton>
+          <CloseButton onClick={() => setEditar(!editar)}>Fechar</CloseButton>
         </InputContainer>
       ) : (
         <ButtonContainer>
-          <ButtonNome onClick={() => setEditar(!editar)}>{usuario.name}</ButtonNome>
-          <DeleteButton onClick={deletarUsuario}><AiOutlineDelete/></DeleteButton>
+          <ButtonNome onClick={() => setEditar(!editar)}>
+            {usuario.name}
+          </ButtonNome>
+          <DeleteButton onClick={deletarUsuario}>
+            <AiOutlineDelete />
+          </DeleteButton>
         </ButtonContainer>
       )}
     </MainContainer>
