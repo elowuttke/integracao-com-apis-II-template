@@ -1,35 +1,43 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { InputCadastro, ContainerCadastro } from './style'
+import { InputCadastro, ContainerCadastro } from "./style";
 
 function AddUsuario(props) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
 
-  const postNovoUsuario = () => {
+  const postNovoUsuario = async () => {
     const body = {
       name: nome,
-      email
+      email,
     };
-    axios
-      .post(
+    try {
+      await axios.post(
         `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users`,
         body,
         {
           headers: {
-            Authorization: "ana-sammi-barbosa"
-          }
+            Authorization: "eloisa-wuttke-conway",
+          },
         }
-      )
-      .then(() => {
-        alert("usuario criado!");
-        props.getUsuarios();
-        setEmail("");
-        setNome("");
-      })
-      .catch((err) => {
-        console.log("erro add", err.response);
-      });
+      );
+      alert("usuario criado!");
+      props.getUsuarios();
+      setEmail("");
+      setNome("");
+    } catch (error) {
+      console.log("error add", error.response);
+    }
+
+    // .then(() => {
+    //   alert("usuario criado!");
+    //   props.getUsuarios();
+    //   setEmail("");
+    //   setNome("");
+    // })
+    // .catch((err) => {
+    //   console.log("erro add", err.response);
+    // });
   };
 
   return (

@@ -21,26 +21,44 @@ function App() {
     getUsuarios();
   }, []);
 
-  const getUsuarios = () => {
-    axios
-      .get(
+  const getUsuarios = async () => {
+    try {
+      const response = await axios.get(
         "https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users",
         {
           headers: {
-            Authorization: "ana-sammi-barbosa",
+            Authorization: "eloisa-wuttke-conway",
           },
         }
-      )
-      .then((res) => {
-        setUsuarios(res.data);
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
+      );
+      setUsuarios(response.data);
+    } catch (error) {
+      console.log(error.response);
+    }
+
+    // .then((res) => {
+    //   setUsuarios(res.data);
+    // })
+    // .catch((error) => {
+    //   console.log(error.response);
+    // });
   };
 
-  const pesquisaUsuario = (pesquisa) => {
-   
+  const pesquisaUsuario = async (pesquisa) => {
+    try {
+      const response = await axios.get(
+        `https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users/search?name=${pesquisa.nome}&email=${pesquisa.email}`,
+        {
+          headers: {
+            Authorization: "eloisa-wuttke-conway",
+          },
+        }
+      );
+      setUsuarios(response.data);
+      setPageFlow(3);
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   const onChangeName = (e) => {
@@ -57,16 +75,16 @@ function App() {
       email,
     };
     setPesquisa(novaPesquisa);
-   
-    setNome("")
-    setEmail("")
-    
+    pesquisaUsuario(novaPesquisa);
+
+    setNome("");
+    setEmail("");
   };
 
   const onClickVoltar = () => {
     getUsuarios();
-    setPageFlow(1)
-  }
+    setPageFlow(1);
+  };
 
   return (
     <div>
@@ -102,7 +120,6 @@ function App() {
                   Cadastrar
                 </ButtonCadastro>
               )}
-              
             </ContainerBarra>
             {usuarios.map((usuario) => {
               return (
@@ -117,7 +134,6 @@ function App() {
             })}
           </>
         )}
-        
       </ContainerPrincipal>
     </div>
   );
